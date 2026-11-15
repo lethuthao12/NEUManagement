@@ -1,0 +1,206 @@
+﻿
+@model System.Data.DataTable
+
+@{
+    ViewData["Title"] = "Danh mục tuyển sinh";
+    var total = Model?.Rows.Count ?? 0;
+}
+
+<div class="container py-4">
+
+    <!-- Tiêu đề -->
+    <div class="p-4 p-md-5 mb-4 rounded-3 bg-primary text-white">
+        <h1 class="fw-bold mb-2">Danh mục tuyển sinh NEU</h1>
+        <p class="mb-0">
+            Tra cứu ngành đào tạo và thông tin chương trình tuyển sinh
+            của Đại học Kinh tế Quốc dân.
+        </p>
+    </div>
+
+    <!-- Thống kê -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted mb-2">Số bản ghi hiển thị</div>
+                    <h2 class="fw-bold text-primary mb-0">@total</h2>
+                    <small class="text-muted">
+                        Theo kết quả truy vấn hiện tại
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted mb-2">Năm tuyển sinh</div>
+                    <h2 class="fw-bold mb-0">2025</h2>
+                    <small class="text-muted">
+                        Năm hiển thị theo tiêu đề danh mục hiện tại
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="text-muted mb-2">Chức năng</div>
+                    <h5 class="fw-bold mb-2">Tra cứu ngành</h5>
+                    <small class="text-muted">
+                        Tìm theo mã ngành hoặc tên ngành
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tìm kiếm -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Tìm kiếm danh mục</h5>
+        </div>
+
+        <div class="card-body">
+            <form asp-controller="Home"
+                  asp-action="DanhMucTuyenSinh"
+                  method="get">
+
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-9">
+                        <label for="keyword" class="form-label">
+                            Mã ngành hoặc tên ngành
+                        </label>
+
+                        <input type="text"
+                               id="keyword"
+                               name="keyword"
+                               value="@ViewBag.Keyword"
+                               class="form-control"
+                               placeholder="Ví dụ: CNTT hoặc Công nghệ thông tin" />
+                    </div>
+
+                    <div class="col-md-3 d-flex gap-2">
+                        <button type="submit"
+                                class="btn btn-primary flex-fill">
+                            Tìm kiếm
+                        </button>
+
+                        <a asp-controller="Home"
+                           asp-action="DanhMucTuyenSinh"
+                           class="btn btn-outline-secondary">
+                            Xóa
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Danh sách ngành -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0">Danh sách ngành và chương trình đào tạo</h5>
+        </div>
+
+        <div class="card-body">
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+            else if (Model == null)
+            {
+                <div class="alert alert-warning">
+                    Chưa nhận được dữ liệu danh mục tuyển sinh.
+                </div>
+            }
+            else if (Model.Rows.Count == 0)
+            {
+                <div class="alert alert-info">
+                    Không tìm thấy ngành tuyển sinh phù hợp.
+                    Bạn hãy thử từ khóa khác hoặc nhấn Xóa để xem lại danh mục.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Năm tuyển sinh</th>
+                                <th>Mã ngành</th>
+                                <th>Tên ngành</th>
+                                <th>Mã chương trình</th>
+                                <th>Chỉ tiêu</th>
+                                <th>Nhóm chương trình</th>
+                                <th>Mô tả</th>
+                                <th>Nguồn chính thức</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (System.Data.DataRow row in Model.Rows)
+                            {
+                                <tr>
+                                    <td>@row["NamTuyenSinh"]</td>
+                                    <td class="fw-semibold">
+                                        @row["MaNganh"]
+                                    </td>
+                                    <td>@row["TenNganh"]</td>
+                                    <td>
+                                        @(row["MaChuongTrinh"] == DBNull.Value
+                                            ? "—" : row["MaChuongTrinh"])
+                                    </td>
+                                    <td>
+                                        @(row["ChiTieu"] == DBNull.Value
+                                            ? "—" : row["ChiTieu"])
+                                    </td>
+                                    <td>
+                                        @(row["NhomChuongTrinh"] == DBNull.Value
+                                            ? "—" : row["NhomChuongTrinh"])
+                                    </td>
+                                    <td>
+                                        @(row["MoTa"] == DBNull.Value
+                                            ? "Chưa có mô tả" : row["MoTa"])
+                                    </td>
+                                    <td>
+                                        @if (row["NguonChinhThuc"] != DBNull.Value
+                                            && !string.IsNullOrWhiteSpace(
+                                                row["NguonChinhThuc"].ToString()))
+                                        {
+                                            <a href="@row["NguonChinhThuc"]"
+                                               target="_blank"
+                                               rel="noopener noreferrer">
+                                                Xem nguồn
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Chưa cập nhật</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-muted mt-3">
+                    Tổng số bản ghi hiển thị: <strong>@total</strong>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="btn btn-outline-secondary">
+            Quay về trang chủ
+        </a>
+    </div>
+
+</div>

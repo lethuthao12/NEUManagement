@@ -1,0 +1,188 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Đăng nhập | NEU Management";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet"
+          href="~/css/login.css"
+          asp-append-version="true" />
+</head>
+<body>
+    <main class="login-page">
+
+        <section class="welcome-panel">
+            <div class="brand">
+                <div class="brand-icon">
+                    <img src="~/images/neu-logo.png"
+                         alt="Logo Đại học Kinh tế Quốc dân" />
+                </div>
+                <div>
+                    <h1>NEU Management</h1>
+                    <p>Hệ thống quản lý Trường Đại học Kinh tế Quốc dân</p>
+                </div>
+            </div>
+
+            <div class="welcome-content">
+                <span class="eyebrow">
+                    NATIONAL ECONOMICS UNIVERSITY
+                </span>
+
+                <h2>Kết nối tri thức<br />Kiến tạo tương lai</h2>
+
+                <div class="feature">
+                    <span class="feature-icon">01</span>
+                    <div>
+                        <strong>Quản lý đào tạo</strong>
+                        <p>Học tập - Rèn luyện - Phát triển</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">02</span>
+                    <div>
+                        <strong>Quản lý sinh viên</strong>
+                        <p>Hiệu quả - Minh bạch - Chính xác</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">03</span>
+                    <div>
+                        <strong>Nghiên cứu khoa học</strong>
+                        <p>Đổi mới - Sáng tạo - Hội nhập</p>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <span class="feature-icon">04</span>
+                    <div>
+                        <strong>Cơ sở vật chất</strong>
+                        <p>Hiện đại - Tiện nghi - Đồng bộ</p>
+                    </div>
+                </div>
+            </div>
+
+            <p class="panel-footer">
+                NEU — MORE THAN A UNIVERSITY
+            </p>
+        </section>
+
+
+        <section class="form-panel">
+            <div class="login-card">
+                <div class="mobile-brand">NEU MANAGEMENT</div>
+
+                <div class="login-logo">
+                    <img src="~/images/neu-logo.png"
+                         alt="Logo Đại học Kinh tế Quốc dân" />
+                </div>
+
+                <form asp-controller="Account"
+                      asp-action="Login"
+                      method="post">
+
+
+                    @Html.AntiForgeryToken()
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <div class="login-error" role="alert">
+                            @ViewBag.ErrorMessage
+                        </div>
+                    }
+
+                    <label class="section-label">
+                        Bạn đăng nhập với tư cách
+                    </label>
+
+                    <div class="role-options">
+                        <label class="role-option">
+                            <input type="radio"
+                                   name="VaiTro"
+                                   value="Student"
+                                   checked />
+                            <span class="role-content">
+                                <span class="role-symbol">♧</span>
+                                <span>
+                                    <strong>Sinh viên</strong>
+                                    <small>Student</small>
+                                </span>
+                            </span>
+                        </label>
+
+                        <label class="role-option">
+                            <input type="radio"
+                                   name="VaiTro"
+                                   value="Staff" />
+                            <span class="role-content">
+                                <span class="role-symbol">▤</span>
+                                <span>
+                                    <strong>Cán bộ</strong>
+                                    <small>Staff</small>
+                                </span>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="field">
+                        <label for="username">
+                            Mã sinh viên / Tài khoản cán bộ
+                        </label>
+                        <input id="username"
+                               name="TenDangNhap"
+                               type="text"
+                               placeholder="Nhập tài khoản của bạn"
+                               autocomplete="username"
+                               required />
+                    </div>
+
+                    <div class="field">
+                        <label for="password">Mật khẩu</label>
+                        <input id="password"
+                               name="MatKhau"
+                               type="password"
+                               placeholder="Nhập mật khẩu"
+                               autocomplete="current-password"
+                               required />
+                    </div>
+
+                    <div class="form-options">
+                        <label class="remember">
+                            <input type="checkbox"
+                                   name="GhiNhoDangNhap"
+                                   value="true" />
+                            <span>Ghi nhớ đăng nhập</span>
+                        </label>
+
+                        <a asp-controller="Account"
+                           asp-action="ForgotPassword">
+                            Quên mật khẩu?
+                        </a>
+                    </div>
+
+                    <button class="login-button" type="submit">
+                        Đăng nhập vào hệ thống
+                        <span aria-hidden="true">→</span>
+                    </button>
+
+                    <p class="security-note">
+                        <span aria-hidden="true">◈</span>
+                        Thông tin đăng nhập được bảo vệ
+                    </p>
+                </form>
+
+                <div class="card-footer">
+                    <span>NEU MANAGEMENT</span>
+                    <span>© @DateTime.Now.Year</span>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

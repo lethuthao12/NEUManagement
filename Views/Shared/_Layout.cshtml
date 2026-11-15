@@ -1,0 +1,195 @@
+﻿
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - NEU Management</title>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+    <link rel="stylesheet"
+          href="~/NEUManagement.styles.css"
+          asp-append-version="true" />
+</head>
+
+<body>
+    @{
+        var isAuthenticated =
+            User.Identity?.IsAuthenticated == true;
+
+        var isStudent = isAuthenticated &&
+            User.IsInRole("Student");
+
+        var isStaff = isAuthenticated &&
+            User.IsInRole("Staff");
+
+        var accountName = User.Identity?.Name ?? "Tài khoản";
+    }
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white
+                    border-bottom shadow-sm">
+            <div class="container-fluid px-4">
+
+                <!-- Logo và tên hệ thống -->
+                <a class="navbar-brand d-flex align-items-center gap-2"
+                   asp-controller="Home"
+                   asp-action="Index">
+
+                    <img src="~/images/neu-logo.png"
+                         alt="Logo NEU"
+                         style="width:48px;height:48px;object-fit:contain;" />
+
+                    <span class="fw-bold" style="color:#14549a;">
+                        NEU Management
+                    </span>
+                </a>
+
+                @if (isAuthenticated)
+                {
+                    <div class="neu-account-menu">
+                        <details class="neu-account-dropdown">
+
+                            <summary class="neu-account-toggle">
+                                <span class="neu-account-info">
+                                    <span class="neu-account-name">
+                                        @accountName
+                                    </span>
+
+                                    <span class="neu-account-role">
+                                        @(isStudent ? "Sinh viên" :
+                                          isStaff ? "Cán bộ" : "Người dùng")
+                                    </span>
+                                </span>
+
+                                <span class="neu-account-chevron">☰</span>
+                            </summary>
+
+                            <nav class="neu-account-panel"
+                                 aria-label="Danh mục tài khoản">
+
+                                <div class="neu-account-panel-title">
+                                    DANH MỤC CHỨC NĂNG
+                                </div>
+
+                                <a asp-controller="Home"
+                                   asp-action="Index"
+                                   class="neu-account-link">
+                                    <span>⌂</span> Trang chủ
+                                </a>
+
+                                @if (isStaff)
+                                {
+                                    <a asp-controller="Home"
+                                       asp-action="Admissions"
+                                       class="neu-account-link">
+                                        <span>▤</span> Hồ sơ tuyển sinh
+                                    </a>
+
+                                    <a asp-controller="Home"
+                                       asp-action="DanhMucTuyenSinh"
+                                       class="neu-account-link">
+                                        <span>🎓</span> Ngành tuyển sinh
+                                    </a>
+
+                                    <a asp-controller="Home"
+                                       asp-action="Students"
+                                       class="neu-account-link">
+                                        <span>♙</span> Quản lý sinh viên
+                                    </a>
+
+                                    <a asp-controller="Home"
+                                       asp-action="Training"
+                                       class="neu-account-link">
+                                        <span>▥</span> Quản lý đào tạo
+                                    </a>
+
+                                    <a asp-controller="Home"
+                                       asp-action="Reports"
+                                       class="neu-account-link">
+                                        <span>▥</span> Báo cáo thống kê
+                                    </a>
+
+                                    <a asp-controller="DotTuyenSinh"
+                                       asp-action="Index"
+                                       class="neu-account-link">
+                                        <span>▦</span> Đợt tuyển sinh
+                                    </a>
+                                }
+
+                                @if (isStudent)
+                                {
+                                    <a asp-controller="Home"
+                                       asp-action="MyAdmission"
+                                       class="neu-account-link">
+                                        <span>▤</span> Hồ sơ của tôi
+                                    </a>
+
+                                    <a asp-controller="Home"
+                                       asp-action="DanhMucTuyenSinh"
+                                       class="neu-account-link">
+                                        <span>🎓</span> Ngành tuyển sinh
+                                    </a>
+
+                                    <a asp-controller="DotTuyenSinh"
+                                       asp-action="Index"
+                                       class="neu-account-link">
+                                        <span>▦</span> Đợt tuyển sinh
+                                    </a>
+                                    <a asp-controller="DangKyTuyenSinh"
+                                       asp-action="Index"
+                                       class="neu-account-link">
+                                        <span>▦</span> Đăng ký tuyển sinh
+                                    </a>
+                                }
+
+                                <div class="neu-account-divider"></div>
+
+                                <form asp-controller="Account"
+                                      asp-action="Logout"
+                                      method="post">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="neu-account-logout">
+                                        <span>↪</span> Đăng xuất
+                                    </button>
+                                </form>
+
+                            </nav>
+                        </details>
+                    </div>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid px-4 py-4">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top text-muted py-3 mt-4">
+        <div class="container-fluid px-4 d-flex
+                    justify-content-between flex-wrap gap-2">
+
+            <span>&copy; @DateTime.Now.Year - NEU Management</span>
+            <span>Trường Đại học Kinh tế Quốc dân</span>
+
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js"
+            asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

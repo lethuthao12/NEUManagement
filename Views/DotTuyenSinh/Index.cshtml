@@ -1,0 +1,623 @@
+﻿@model System.Data.DataTable
+
+@{
+    bool laNhanVien = User.IsInRole("Staff");
+
+    ViewData["Title"] = laNhanVien
+        ? "Quản lý đợt tuyển sinh"
+        : "Các đợt tuyển sinh";
+
+    int tongSoDot = Model.Rows.Count;
+    int dangDienRa = 0;
+    int chuaMo = 0;
+    int daDong = 0;
+
+    foreach (System.Data.DataRow item in Model.Rows)
+    {
+        string trangThai = item["TrangThai"] == DBNull.Value
+            ? ""
+            : item["TrangThai"].ToString()?.Trim() ?? "";
+
+        if (trangThai == "Đang mở")
+        {
+            dangDienRa++;
+        }
+        else if (trangThai == "Chưa mở")
+        {
+            chuaMo++;
+        }
+        else if (trangThai == "Đã đóng")
+        {
+            daDong++;
+        }
+    }
+}
+
+<style>
+    .dot-page {
+        color: #243b53;
+        padding: 8px 0 28px;
+    }
+
+        .dot-page * {
+            box-sizing: border-box;
+        }
+
+    .dot-hero {
+        position: relative;
+        overflow: hidden;
+        padding: 30px 34px;
+        margin-bottom: 26px;
+        color: white;
+        border-radius: 16px;
+        background: linear-gradient(115deg, #07529b, #0878d1 65%, #54b1f5);
+        box-shadow: 0 8px 24px rgba(17, 89, 160, .13);
+    }
+
+        .dot-hero::after {
+            content: "";
+            position: absolute;
+            width: 240px;
+            height: 240px;
+            right: -55px;
+            top: -115px;
+            border: 30px solid rgba(255,255,255,.09);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+    .dot-hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .dot-eyebrow {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        opacity: .85;
+        margin-bottom: 8px;
+    }
+
+    .dot-hero h2 {
+        font-size: clamp(23px, 2.5vw, 30px);
+        font-weight: 750;
+        margin: 0 0 10px;
+    }
+
+    .dot-hero p {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.7;
+        color: rgba(255,255,255,.9);
+    }
+
+    .dot-section-heading {
+        color: #084f98;
+        font-size: 21px;
+        font-weight: 750;
+        margin: 0 0 18px;
+    }
+
+    .dot-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+    .dot-stat-card {
+        min-width: 0;
+        background: #fff;
+        border: 1px solid #e1ebf7;
+        border-radius: 13px;
+        padding: 19px;
+        box-shadow: 0 5px 17px rgba(25, 75, 125, .045);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+        .dot-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 22px rgba(25, 75, 125, .09);
+        }
+
+    .dot-stat-icon {
+        flex-shrink: 0;
+        width: 49px;
+        height: 49px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 12px;
+        font-size: 24px;
+    }
+
+    .dot-stat-blue {
+        background: #e6f1ff;
+    }
+
+    .dot-stat-green {
+        background: #e5f8ed;
+    }
+
+    .dot-stat-orange {
+        background: #fff0df;
+    }
+
+    .dot-stat-purple {
+        background: #f0e9ff;
+    }
+
+    .dot-stat-label {
+        color: #647b96;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .dot-stat-number {
+        color: #084f98;
+        font-size: 27px;
+        font-weight: 750;
+        line-height: 1.2;
+    }
+
+    .dot-panel {
+        background: #fff;
+        border: 1px solid #e0eaf6;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(25, 75, 125, .05);
+    }
+
+    .dot-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 14px;
+        padding: 21px 23px;
+        border-bottom: 1px solid #e8eff8;
+    }
+
+    .dot-panel-title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 750;
+        color: #084f98;
+    }
+
+    .dot-panel-subtitle {
+        color: #71839a;
+        font-size: 13px;
+        margin: 5px 0 0;
+    }
+
+    .dot-btn-add {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 11px 17px;
+        border: 0;
+        border-radius: 9px;
+        color: white !important;
+        background: #0878d1;
+        text-decoration: none !important;
+        font-size: 14px;
+        font-weight: 650;
+        box-shadow: 0 4px 10px rgba(8, 120, 209, .16);
+        transition: background .2s ease, transform .2s ease;
+    }
+
+        .dot-btn-add:hover {
+            background: #075ba9;
+            transform: translateY(-1px);
+        }
+
+    .dot-alert {
+        margin: 0 0 22px;
+        padding: 14px 18px;
+        border-radius: 10px;
+        border: 1px solid #b9e6ca;
+        background: #effbf3;
+        color: #176c3a;
+    }
+
+    .dot-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .dot-table {
+        width: 100%;
+        min-width: 900px;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 0;
+    }
+
+        .dot-table thead th {
+            background: #f2f7fd;
+            color: #315779;
+            padding: 15px 16px;
+            font-size: 12px;
+            font-weight: 750;
+            text-transform: uppercase;
+            letter-spacing: .35px;
+            white-space: nowrap;
+            border-bottom: 1px solid #e0eaf6;
+        }
+
+        .dot-table tbody td {
+            padding: 16px;
+            font-size: 13px;
+            color: #43566c;
+            vertical-align: middle;
+            border-bottom: 1px solid #edf2f8;
+        }
+
+        .dot-table tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .dot-table tbody tr:hover td {
+            background: #f8fbff;
+        }
+
+    .dot-code {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 6px;
+        background: #eaf3ff;
+        color: #0863b4;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .dot-name {
+        color: #173f68;
+        font-weight: 700;
+        min-width: 140px;
+    }
+
+    .dot-status {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 650;
+        white-space: nowrap;
+        background: #eef2f7;
+        color: #5b6b7d;
+    }
+
+    .dot-status-running {
+        background: #e4f8eb;
+        color: #187743;
+    }
+
+    .dot-status-upcoming {
+        background: #fff3d8;
+        color: #956000;
+    }
+
+    .dot-status-ended {
+        background: #e9eef5;
+        color: #586b80;
+    }
+
+    .dot-status-other {
+        background: #e8f1ff;
+        color: #175da8;
+    }
+
+    .dot-description {
+        min-width: 150px;
+        max-width: 250px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .dot-btn-edit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border: 1px solid #c9e0ff;
+        border-radius: 8px;
+        color: #0866b8 !important;
+        background: #edf5ff;
+        text-decoration: none !important;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: background .2s ease;
+    }
+
+        .dot-btn-edit:hover {
+            background: #dcecff;
+        }
+
+    .dot-empty {
+        padding: 48px 20px;
+        text-align: center;
+    }
+
+    .dot-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 66px;
+        height: 66px;
+        margin: 0 auto 15px;
+        border-radius: 18px;
+        background: #eaf3ff;
+        font-size: 30px;
+    }
+
+    .dot-empty h4 {
+        font-size: 17px;
+        font-weight: 750;
+        color: #174d83;
+        margin-bottom: 8px;
+    }
+
+    .dot-empty p {
+        color: #75869a;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    @@media (max-width: 1000px) {
+        .dot-stats {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .dot-hero {
+            padding: 24px 20px;
+        }
+
+        .dot-stats {
+            grid-template-columns: 1fr;
+            gap: 11px;
+        }
+
+        .dot-panel-header {
+            align-items: flex-start;
+            padding: 18px;
+        }
+
+        .dot-btn-add {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="container-fluid dot-page">
+
+    <div class="dot-hero">
+        <div class="dot-hero-content">
+            <div class="dot-eyebrow">NEU MANAGEMENT</div>
+
+            <h2>
+                @(laNhanVien
+                    ? "Quản lý đợt tuyển sinh"
+                    : "Các đợt tuyển sinh")
+            </h2>
+
+            <p>
+                @(laNhanVien
+                    ? "Theo dõi thời gian mở đợt, hạn đăng ký và trạng thái tiếp nhận hồ sơ tuyển sinh của nhà trường."
+                    : "Theo dõi các đợt tuyển sinh, thời gian đăng ký và hạn tiếp nhận hồ sơ của nhà trường.")
+            </p>
+        </div>
+    </div>
+
+    @if (laNhanVien && TempData["SuccessMessage"] != null)
+    {
+        <div class="dot-alert">
+            <strong>✓ Thành công:</strong>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <h3 class="dot-section-heading">Tổng quan đợt tuyển sinh</h3>
+
+    <div class="dot-stats">
+
+        <div class="dot-stat-card">
+            <div class="dot-stat-icon dot-stat-blue">📋</div>
+            <div>
+                <div class="dot-stat-label">Tổng số đợt</div>
+                <div class="dot-stat-number">@tongSoDot</div>
+            </div>
+        </div>
+
+        <div class="dot-stat-card">
+            <div class="dot-stat-icon dot-stat-green">🟢</div>
+            <div>
+                <div class="dot-stat-label">Đang mở</div>
+                <div class="dot-stat-number">@dangDienRa</div>
+            </div>
+        </div>
+
+        <div class="dot-stat-card">
+            <div class="dot-stat-icon dot-stat-orange">📅</div>
+            <div>
+                <div class="dot-stat-label">Chưa mở</div>
+                <div class="dot-stat-number">@chuaMo</div>
+            </div>
+        </div>
+
+        <div class="dot-stat-card">
+            <div class="dot-stat-icon dot-stat-purple">✓</div>
+            <div>
+                <div class="dot-stat-label">Đã đóng</div>
+                <div class="dot-stat-number">@daDong</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="dot-panel">
+
+        <div class="dot-panel-header">
+            <div>
+                <h3 class="dot-panel-title">
+                    Danh sách đợt tuyển sinh
+                </h3>
+
+                <p class="dot-panel-subtitle">
+                    @(laNhanVien
+                        ? "Quản lý thông tin, thời gian và trạng thái của từng đợt."
+                        : "Thông tin các đợt tuyển sinh và thời gian tiếp nhận hồ sơ.")
+                </p>
+            </div>
+
+            @if (laNhanVien)
+            {
+                <a asp-controller="DotTuyenSinh"
+                   asp-action="Create"
+                   class="dot-btn-add">
+                    ＋ Thêm đợt tuyển sinh
+                </a>
+            }
+        </div>
+
+        @if (Model.Rows.Count == 0)
+        {
+            <div class="dot-empty">
+                <div class="dot-empty-icon">📅</div>
+
+                <h4>Chưa có đợt tuyển sinh</h4>
+
+                <p>
+                    @(laNhanVien
+                        ? "Hiện chưa có dữ liệu. Bạn có thể tạo đợt tuyển sinh mới."
+                        : "Hiện tại nhà trường chưa công bố đợt tuyển sinh nào.")
+                </p>
+
+                @if (laNhanVien)
+                {
+                    <a asp-controller="DotTuyenSinh"
+                       asp-action="Create"
+                       class="dot-btn-add">
+                        ＋ Thêm đợt đầu tiên
+                    </a>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="dot-table-wrap">
+
+                <table class="dot-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đợt</th>
+                            <th>Tên đợt tuyển sinh</th>
+                            <th>Năm</th>
+                            <th>Ngày bắt đầu</th>
+                            <th>Hạn đăng ký</th>
+                            <th>Trạng thái</th>
+                            <th>Mô tả</th>
+
+                            @if (laNhanVien)
+                            {
+                                <th>Thao tác</th>
+                            }
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (System.Data.DataRow row in Model.Rows)
+                        {
+                            string trangThai =
+                                row["TrangThai"] == DBNull.Value
+                                ? ""
+                                : row["TrangThai"].ToString()?.Trim() ?? "";
+
+                            string statusClass = "dot-status-other";
+
+                            if (trangThai == "Đang mở")
+                            {
+                                statusClass = "dot-status-running";
+                            }
+                            else if (trangThai == "Chưa mở")
+                            {
+                                statusClass = "dot-status-upcoming";
+                            }
+                            else if (trangThai == "Đã đóng")
+                            {
+                                statusClass = "dot-status-ended";
+                            }
+
+                            <tr>
+                                <td>
+                                    <span class="dot-code">
+                                        @row["MaDot"]
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="dot-name">
+                                        @row["TenDot"]
+                                    </div>
+                                </td>
+
+                                <td>@row["NamTuyenSinh"]</td>
+
+                                <td>
+                                    @(row["NgayBatDau"] == DBNull.Value
+                                        ? "—"
+                                        : Convert.ToDateTime(row["NgayBatDau"]).ToString("dd/MM/yyyy"))
+                                </td>
+
+                                <td>
+                                    @(row["HanDangKy"] == DBNull.Value
+                                        ? "—"
+                                        : Convert.ToDateTime(row["HanDangKy"]).ToString("dd/MM/yyyy"))
+                                </td>
+
+                                <td>
+                                    <span class="dot-status @statusClass">
+                                        @(string.IsNullOrWhiteSpace(trangThai)
+                                            ? "Chưa cập nhật"
+                                            : trangThai)
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="dot-description">
+                                        @(row["MoTa"] == DBNull.Value
+                                            || string.IsNullOrWhiteSpace(row["MoTa"].ToString())
+                                            ? "Chưa có mô tả"
+                                            : row["MoTa"].ToString())
+                                    </div>
+                                </td>
+
+                                @if (laNhanVien)
+                                {
+                                    <td>
+                                        <a asp-controller="DotTuyenSinh"
+                                           asp-action="Edit"
+                                           asp-route-id="@row["MaDot"]"
+                                           class="dot-btn-edit">
+                                            ✎ Sửa
+                                        </a>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        }
+    </div>
+</div>

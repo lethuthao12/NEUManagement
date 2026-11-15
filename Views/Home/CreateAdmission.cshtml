@@ -1,0 +1,118 @@
+﻿
+@model NEUManagement.Models.HoSoTuyenSinh
+
+@{
+	ViewData["Title"] = "Thêm hồ sơ tuyển sinh";
+}
+
+<div class="container mt-4 mb-5">
+	<div class="card shadow-sm mx-auto" style="max-width: 760px;">
+		<div class="card-header bg-primary text-white p-4">
+			<h3 class="mb-1">Thêm hồ sơ tuyển sinh</h3>
+			<p class="mb-0">Hệ thống quản lý tuyển sinh NEU</p>
+		</div>
+
+		<div class="card-body p-4">
+			<form asp-controller="Home"
+				  asp-action="CreateAdmission"
+				  method="post">
+
+				@Html.AntiForgeryToken()
+
+				<div asp-validation-summary="ModelOnly"
+					 class="text-danger mb-3"></div>
+
+				<div class="mb-3">
+					<label asp-for="HoTen" class="form-label">
+						Họ và tên *
+					</label>
+					<input asp-for="HoTen"
+						   class="form-control"
+						   placeholder="Nhập họ và tên" />
+					<span asp-validation-for="HoTen"
+						  class="text-danger"></span>
+				</div>
+
+				<div class="mb-3">
+					<label asp-for="NgaySinh" class="form-label">
+						Ngày sinh
+					</label>
+					<input asp-for="NgaySinh"
+						   type="date"
+						   class="form-control" />
+					<span asp-validation-for="NgaySinh"
+						  class="text-danger"></span>
+				</div>
+
+				<div class="mb-3">
+					<label asp-for="SoDienThoai" class="form-label">
+						Số điện thoại
+					</label>
+					<input asp-for="SoDienThoai"
+						   class="form-control"
+						   placeholder="Nhập số điện thoại" />
+					<span asp-validation-for="SoDienThoai"
+						  class="text-danger"></span>
+				</div>
+
+				<div class="mb-3">
+					<label asp-for="Email" class="form-label">
+						Email
+					</label>
+					<input asp-for="Email"
+						   type="email"
+						   class="form-control"
+						   placeholder="example@email.com" />
+					<span asp-validation-for="Email"
+						  class="text-danger"></span>
+				</div>
+
+				<div class="mb-3">
+					<label asp-for="NganhDangKy" class="form-label">
+						Ngành đăng ký *
+					</label>
+
+					<select asp-for="NganhDangKy"
+							class="form-select"
+							required>
+						<option value="">-- Chọn ngành đăng ký --</option>
+
+						@if (ViewBag.DanhSachNganh != null)
+						{
+							foreach (System.Data.DataRow nganh
+	                            in ((System.Data.DataTable)ViewBag.DanhSachNganh).Rows)
+		
+		
+							{
+								<option value="@nganh["TenNganh"]">
+									@nganh["MaNganh"] - @nganh["TenNganh"]
+								</option>
+							}
+						}
+					</select>
+
+					<span asp-validation-for="NganhDangKy"
+						  class="text-danger"></span>
+				</div>
+
+				<div class="d-flex gap-2 mt-4">
+					<button type="submit" class="btn btn-primary">
+						Lưu hồ sơ
+					</button>
+
+					<a asp-controller="Home"
+					   asp-action="Admissions"
+					   class="btn btn-outline-secondary">
+						Quay lại
+					</a>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

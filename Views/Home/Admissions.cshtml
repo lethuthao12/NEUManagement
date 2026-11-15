@@ -1,0 +1,703 @@
+﻿
+@model System.Data.DataTable
+
+@{
+    ViewData["Title"] = "Quản lý tuyển sinh";
+}
+
+<style>
+    .admissions-page {
+        font-family: Arial, sans-serif;
+        color: #24364b;
+        padding: 12px 0 28px;
+    }
+
+    .admissions-banner {
+        position: relative;
+        overflow: hidden;
+        padding: 32px;
+        margin-bottom: 26px;
+        border-radius: 14px;
+        color: white;
+        background: linear-gradient(120deg, #104b88, #1676c5);
+        box-shadow: 0 8px 24px rgba(20, 77, 135, .13);
+    }
+
+        .admissions-banner::after {
+            content: "";
+            position: absolute;
+            width: 210px;
+            height: 210px;
+            right: -55px;
+            top: -100px;
+            border: 28px solid rgba(255,255,255,.08);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+    .banner-label {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        opacity: .85;
+        margin-bottom: 12px;
+    }
+
+    .admissions-banner h1 {
+        font-size: 29px;
+        font-weight: 700;
+        margin: 0 0 10px;
+    }
+
+    .admissions-banner p {
+        margin: 0;
+        line-height: 1.7;
+        color: #edf6ff;
+    }
+
+    .page-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 22px;
+    }
+
+        .page-heading h2 {
+            font-size: 23px;
+            font-weight: 700;
+            color: #124b85;
+            margin: 0 0 7px;
+        }
+
+        .page-heading p {
+            color: #718096;
+            font-size: 14px;
+            margin: 0;
+        }
+
+    .heading-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 11px 16px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        border: 1px solid transparent;
+        transition: .2s;
+    }
+
+    .action-home {
+        background: #edf4fc;
+        color: #17558e;
+        border-color: #dce9f7;
+    }
+
+        .action-home:hover {
+            background: #dfeeff;
+            color: #104b88;
+        }
+
+    .action-create {
+        background: #176dc0;
+        color: white;
+        box-shadow: 0 4px 12px rgba(23,109,192,.18);
+    }
+
+        .action-create:hover {
+            background: #10589e;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 26px;
+    }
+
+    .stat-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 20px 18px;
+        border: 1px solid #e3ebf5;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 4px 15px rgba(22, 55, 90, .045);
+    }
+
+    .stat-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        font-size: 23px;
+    }
+
+    .icon-total {
+        background: #e6f1ff;
+    }
+
+    .icon-pending {
+        background: #fff3d8;
+    }
+
+    .icon-approved {
+        background: #e0f6e9;
+    }
+
+    .icon-rejected {
+        background: #ffe7e7;
+    }
+
+    .stat-label {
+        color: #718096;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .stat-value {
+        font-size: 27px;
+        line-height: 1;
+        font-weight: 700;
+        color: #153f70;
+    }
+
+    .content-panel {
+        overflow: hidden;
+        background: white;
+        border: 1px solid #e1e9f3;
+        border-radius: 13px;
+        box-shadow: 0 5px 20px rgba(22, 55, 90, .045);
+    }
+
+    .panel-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 22px 24px;
+        border-bottom: 1px solid #eaf0f6;
+    }
+
+        .panel-heading h3 {
+            color: #174c82;
+            font-size: 19px;
+            font-weight: 700;
+            margin: 0 0 6px;
+        }
+
+        .panel-heading p {
+            color: #8290a2;
+            font-size: 13px;
+            margin: 0;
+        }
+
+    .filter-area {
+        display: grid;
+        grid-template-columns: minmax(200px, 1.5fr) minmax(150px, 1fr) minmax(180px, 1.2fr) auto;
+        align-items: end;
+        gap: 14px;
+        padding: 22px 24px;
+        background: #fbfdff;
+        border-bottom: 1px solid #eaf0f6;
+    }
+
+    .filter-field label {
+        display: block;
+        margin-bottom: 8px;
+        color: #43556c;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .filter-field input,
+    .filter-field select {
+        width: 100%;
+        height: 43px;
+        padding: 0 12px;
+        border: 1px solid #dbe4ef;
+        border-radius: 8px;
+        background: white;
+        color: #334155;
+        font-size: 13px;
+        outline: none;
+    }
+
+        .filter-field input:focus,
+        .filter-field select:focus {
+            border-color: #3987d5;
+            box-shadow: 0 0 0 3px rgba(57,135,213,.10);
+        }
+
+    .filter-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .filter-button {
+        height: 43px;
+        padding: 0 15px;
+        border: none;
+        border-radius: 8px;
+        background: #176dc0;
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .filter-button:hover {
+            background: #10589e;
+        }
+
+    .reset-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 43px;
+        padding: 0 13px;
+        border: 1px solid #dbe4ef;
+        border-radius: 8px;
+        background: white;
+        color: #53657a;
+        text-decoration: none;
+        font-size: 13px;
+    }
+
+        .reset-button:hover {
+            background: #f0f5fb;
+            color: #174c82;
+        }
+
+    .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .admissions-table {
+        width: 100%;
+        min-width: 850px;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+        .admissions-table th {
+            padding: 16px 18px;
+            background: #f3f7fc;
+            color: #53677f;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        .admissions-table td {
+            padding: 17px 18px;
+            border-top: 1px solid #edf1f6;
+            vertical-align: middle;
+        }
+
+        .admissions-table tbody tr {
+            transition: background .15s;
+        }
+
+            .admissions-table tbody tr:hover {
+                background: #f7fbff;
+            }
+
+    .application-id {
+        color: #1767b0;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .applicant-name {
+        color: #24364b;
+        font-weight: 600;
+    }
+
+    .major-name {
+        color: #5f7085;
+    }
+
+    .status {
+        display: inline-block;
+        padding: 7px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .status-pending {
+        background: #fff3d9;
+        color: #986600;
+    }
+
+    .status-approved {
+        background: #e0f6e9;
+        color: #187347;
+    }
+
+    .status-rejected {
+        background: #ffe7e7;
+        color: #b42318;
+    }
+
+    .status-form {
+        min-width: 150px;
+    }
+
+        .status-form select {
+            width: 100%;
+            margin-bottom: 7px;
+            padding: 8px;
+            border: 1px solid #dbe4ef;
+            border-radius: 7px;
+            font-size: 12px;
+        }
+
+    .update-button {
+        padding: 7px 11px;
+        border: none;
+        border-radius: 7px;
+        background: #e7f1ff;
+        color: #145ca1;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .update-button:hover {
+            background: #d4e7ff;
+        }
+
+    .empty-message {
+        padding: 40px 20px !important;
+        text-align: center;
+        color: #718096;
+        line-height: 1.8;
+    }
+
+    .page-footer {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 15px 22px;
+        border-top: 1px solid #edf1f6;
+        color: #8491a2;
+        font-size: 12px;
+    }
+
+    @@media (max-width: 1000px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .filter-area {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 600px) {
+        .admissions-banner {
+            padding: 25px 20px;
+        }
+
+            .admissions-banner h1 {
+                font-size: 23px;
+            }
+
+        .stats-grid,
+        .filter-area {
+            grid-template-columns: 1fr;
+        }
+
+        .panel-heading {
+            padding: 18px;
+        }
+
+        .filter-area {
+            padding: 18px;
+        }
+
+        .filter-actions {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+
+<div class="admissions-page">
+
+    <section class="admissions-banner">
+        <div class="banner-label">NEU MANAGEMENT</div>
+        <h1>Quản lý tuyển sinh</h1>
+        <p>
+            Theo dõi hồ sơ đăng ký, tra cứu thông tin thí sinh
+            và cập nhật trạng thái xét duyệt tuyển sinh.
+        </p>
+    </section>
+
+    <div class="page-heading">
+        <div>
+            <h2>Tổng quan tuyển sinh</h2>
+            <p>Thông tin tổng hợp và danh sách hồ sơ đăng ký.</p>
+        </div>
+
+        <div class="heading-actions">
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="action-button action-home">
+                ← Trang chủ
+            </a>
+
+            <a asp-controller="Home"
+               asp-action="CreateAdmission"
+               class="action-button action-create">
+                + Thêm hồ sơ
+            </a>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card">
+            <div class="stat-icon icon-total">📋</div>
+            <div>
+                <div class="stat-label">Tổng số hồ sơ</div>
+                <div class="stat-value">@ViewBag.TotalCount</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon icon-pending">⏳</div>
+            <div>
+                <div class="stat-label">Chờ xét duyệt</div>
+                <div class="stat-value">@ViewBag.PendingCount</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon icon-approved">✓</div>
+            <div>
+                <div class="stat-label">Đã duyệt</div>
+                <div class="stat-value">@ViewBag.ApprovedCount</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon icon-rejected">✕</div>
+            <div>
+                <div class="stat-label">Từ chối</div>
+                <div class="stat-value">@ViewBag.RejectedCount</div>
+            </div>
+        </div>
+
+    </div>
+
+    <section class="content-panel">
+
+        <div class="panel-heading">
+            <div>
+                <h3>Danh sách hồ sơ tuyển sinh</h3>
+                <p>Tra cứu hồ sơ và theo dõi kết quả xét duyệt.</p>
+            </div>
+        </div>
+
+        <form asp-controller="Home"
+              asp-action="Admissions"
+              method="get"
+              class="filter-area">
+
+            <div class="filter-field">
+                <label for="keyword">Tìm kiếm hồ sơ</label>
+                <input id="keyword"
+                       type="text"
+                       name="keyword"
+                       value="@ViewBag.Keyword"
+                       placeholder="Nhập mã hồ sơ hoặc họ tên..." />
+            </div>
+
+            <div class="filter-field">
+                <label for="status">Trạng thái</label>
+                <select id="status" name="status">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="Chờ xét duyệt"
+                            selected="@(ViewBag.Status == "Chờ xét duyệt")">
+                        Chờ xét duyệt
+                    </option>
+                    <option value="Đã duyệt"
+                            selected="@(ViewBag.Status == "Đã duyệt")">
+                        Đã duyệt
+                    </option>
+                    <option value="Từ chối"
+                            selected="@(ViewBag.Status == "Từ chối")">
+                        Từ chối
+                    </option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="major">Ngành đăng ký</label>
+                <select id="major" name="major">
+                    <option value="">Tất cả ngành</option>
+
+                    @if (ViewBag.DanhSachNganh != null)
+                    {
+                        foreach (System.Data.DataRow nganh
+                            in ((System.Data.DataTable)ViewBag.DanhSachNganh).Rows)
+                        {
+                            var tenNganh = Convert.ToString(nganh["TenNganh"]) ?? "";
+                            var maNganh = Convert.ToString(nganh["MaNganh"]) ?? "";
+
+                            <option value="@tenNganh"
+                                    selected="@(ViewBag.Major == tenNganh)">
+                                @maNganh - @tenNganh
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="filter-button">
+                    Tìm kiếm
+                </button>
+
+                <a asp-controller="Home"
+                   asp-action="Admissions"
+                   class="reset-button">
+                    Đặt lại
+                </a>
+            </div>
+
+        </form>
+
+        <div class="table-wrap">
+            <table class="admissions-table">
+                <thead>
+                    <tr>
+                        <th>Mã hồ sơ</th>
+                        <th>Họ và tên</th>
+                        <th>Ngày đăng ký</th>
+                        <th>Ngành đăng ký</th>
+                        <th>Trạng thái</th>
+                        <th>Cập nhật trạng thái</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model == null || Model.Rows.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="empty-message">
+                                Không tìm thấy hồ sơ phù hợp.<br />
+                                Vui lòng thay đổi từ khóa hoặc điều kiện tìm kiếm.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (System.Data.DataRow row in Model.Rows)
+                        {
+                            var trangThai = Convert.ToString(row["TrangThai"]) ?? "";
+
+                            var cssTrangThai = trangThai switch
+                            {
+                                "Đã duyệt" => "status-approved",
+                                "Từ chối" => "status-rejected",
+                                _ => "status-pending"
+                            };
+
+                            <tr>
+                                <td class="application-id">
+                                    @row["MaHoSo"]
+                                </td>
+
+                                <td class="applicant-name">
+                                    @row["HoTen"]
+                                </td>
+
+                                <td>
+                                    @(row["NgayDangKy"] == DBNull.Value
+                                        ? ""
+                                        : Convert.ToDateTime(row["NgayDangKy"])
+                                            .ToString("dd/MM/yyyy HH:mm"))
+                                </td>
+
+                                <td class="major-name">
+                                    @row["NganhDangKy"]
+                                </td>
+
+                                <td>
+                                    <span class="status @cssTrangThai">
+                                        @trangThai
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <form asp-controller="Home"
+                                          asp-action="UpdateAdmissionStatus"
+                                          method="post"
+                                          class="status-form">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="maHoSo"
+                                               value="@row["MaHoSo"]" />
+
+                                        <select name="trangThai"
+                                                aria-label="Trạng thái mới">
+                                            <option value="Chờ xét duyệt"
+                                                    selected="@(trangThai == "Chờ xét duyệt")">
+                                                Chờ xét duyệt
+                                            </option>
+                                            <option value="Đã duyệt"
+                                                    selected="@(trangThai == "Đã duyệt")">
+                                                Đã duyệt
+                                            </option>
+                                            <option value="Từ chối"
+                                                    selected="@(trangThai == "Từ chối")">
+                                                Từ chối
+                                            </option>
+                                        </select>
+
+                                        <button type="submit" class="update-button">
+                                            Lưu thay đổi
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="page-footer">
+            <span>NEU Management · Hệ thống quản lý tuyển sinh</span>
+            <span>Dữ liệu hồ sơ được tải từ hệ thống.</span>
+        </div>
+
+    </section>
+
+</div>

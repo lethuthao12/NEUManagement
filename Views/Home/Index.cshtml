@@ -1,0 +1,563 @@
+﻿@{
+	ViewData["Title"] = "Trang chủ - NEU Management";
+}
+
+<style>
+	.neu-home {
+		color: #243247;
+		font-family: Arial, sans-serif;
+		padding-bottom: 20px;
+	}
+
+	.neu-banner {
+		position: relative;
+		overflow: hidden;
+		background: linear-gradient(115deg, #07519a, #167bd1 65%, #64b5f6);
+		color: white;
+		padding: 34px 30px;
+		border-radius: 12px;
+		margin-bottom: 26px;
+		min-height: 145px;
+		display: flex;
+		align-items: center;
+	}
+
+		.neu-banner::after {
+			content: "";
+			position: absolute;
+			width: 280px;
+			height: 280px;
+			border: 35px solid rgba(255,255,255,.08);
+			border-radius: 50%;
+			right: -35px;
+			top: -115px;
+			pointer-events: none;
+		}
+
+	.banner-content {
+		position: relative;
+		z-index: 1;
+	}
+
+	.banner-eyebrow {
+		font-size: 12px;
+		letter-spacing: 3px;
+		font-weight: 700;
+		margin-bottom: 12px;
+		opacity: .9;
+	}
+
+	.neu-banner h1 {
+		font-size: 29px;
+		font-weight: 700;
+		margin-bottom: 10px;
+	}
+
+	.neu-banner p {
+		font-size: 15px;
+		margin-bottom: 0;
+		line-height: 1.7;
+	}
+
+	.section-title {
+		font-size: 21px;
+		font-weight: 700;
+		margin-bottom: 17px;
+		color: #104b91;
+	}
+
+	.module-grid {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 16px;
+		 
+	}
+
+	.module-card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		background: #fff;
+		border: 1px solid #e1eaf5;
+		border-radius: 11px;
+		padding: 20px;
+		min-height: 155px;
+		text-decoration: none;
+		color: #243247;
+		box-shadow: 0 4px 14px rgba(24, 65, 110, .055);
+		transition: transform .2s, box-shadow .2s, border-color .2s;
+	}
+
+	a.module-card:hover {
+		transform: translateY(-3px);
+		box-shadow: 0 8px 22px rgba(24, 65, 110, .12);
+		border-color: #8bbcf4;
+		color: #075fc2;
+		text-decoration: none;
+	}
+
+	.module-icon {
+		width: 46px;
+		height: 46px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 13px;
+		background: #e7f1ff;
+		color: #1768c5;
+		font-size: 24px;
+		margin-bottom: 14px;
+	}
+
+	.icon-green {
+		background: #e2f7e8;
+	}
+
+	.icon-purple {
+		background: #eee7ff;
+	}
+
+	.icon-orange {
+		background: #fff0e2;
+	}
+
+	.module-card h3 {
+		font-size: 16px;
+		font-weight: 700;
+		color: #104b91;
+		margin-bottom: 8px;
+	}
+
+	.module-card p {
+		font-size: 13px;
+		color: #687991;
+		margin-bottom: 0;
+		line-height: 1.65;
+	}
+
+	.card-arrow {
+		position: absolute;
+		right: 16px;
+		bottom: 16px;
+		width: 25px;
+		height: 25px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		background: #e4f0ff;
+		color: #1768c5;
+		font-size: 16px;
+	}
+
+	.notice-card {
+		background: #edf6ff;
+		border-color: #dcecff;
+	}
+
+		.notice-card .module-icon {
+			background: #d7eaff;
+		}
+
+	.notice {
+		margin-top: 24px;
+		padding: 18px 21px;
+		background: #f1f7fd;
+		border-left: 4px solid #1672c4;
+		border-radius: 7px;
+	}
+
+		.notice h3 {
+			font-size: 16px;
+			font-weight: 700;
+			color: #104b91;
+			margin-bottom: 8px;
+		}
+
+		.notice p {
+			margin-bottom: 0;
+			color: #526780;
+			font-size: 14px;
+			line-height: 1.7;
+		}
+
+	.welcome-user {
+		margin-top: 10px;
+		font-size: 13px;
+		opacity: .9;
+	}
+
+	@@media (max-width: 1100px) {
+		.module-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@@media (max-width: 576px) {
+		.module-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.neu-banner {
+			padding: 26px 20px;
+		}
+
+			.neu-banner h1 {
+				font-size: 24px;
+			}
+
+		.module-card {
+			min-height: 140px;
+		}
+	}
+
+	.admission-statistics {
+		margin: 28px 0;
+	}
+
+		.admission-statistics h2 {
+			font-size: 24px;
+			font-weight: 700;
+			margin-bottom: 6px;
+			color: #243247;
+		}
+
+	.statistics-description {
+		color: #64748b;
+		margin-bottom: 18px;
+	}
+
+	.statistics-grid {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 18px;
+	}
+
+	.statistics-card {
+		background: #fff;
+		border: 1px solid #e2e8f0;
+		border-left: 4px solid #1769aa;
+		border-radius: 12px;
+		padding: 20px;
+		box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+	}
+
+		.statistics-card strong {
+			display: block;
+			font-size: 32px;
+			margin: 10px 0;
+			color: #243247;
+		}
+
+	.statistics-label {
+		font-weight: 600;
+		color: #475569;
+	}
+
+	.statistics-note {
+		display: block;
+		font-size: 13px;
+		color: #64748b;
+	}
+
+	.statistics-card.pending {
+		border-left-color: #d97706;
+	}
+
+	.statistics-card.approved {
+		border-left-color: #16a34a;
+	}
+
+	.statistics-card.rejected {
+		border-left-color: #dc2626;
+	}
+
+	
+		
+
+	/* Giữ các mục menu trên cùng một hàng */
+	.navbar-nav {
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
+		gap: 4px;
+	}
+
+		.navbar-nav .nav-link {
+			display: inline-flex;
+			align-items: center;
+			white-space: nowrap;
+			padding: 10px 12px;
+			color: #52677f;
+			text-decoration: none;
+			border-radius: 8px;
+			transition: background 0.2s ease, color 0.2s ease;
+		}
+
+			.navbar-nav .nav-link:hover {
+				color: #0866b8;
+				background: #eef5ff;
+			}
+	
+
+
+	@@media (max-width: 900px) {
+		.statistics-grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@@media (max-width: 480px) {
+		.statistics-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+</style>
+
+<div class="neu-home">
+
+	@if (User.IsInRole("Student"))
+	{
+		<!-- GIAO DIỆN SINH VIÊN -->
+
+		<section class="neu-banner">
+			<div class="banner-content">
+				<div class="banner-eyebrow">NEU MANAGEMENT</div>
+				<h1>Xin chào, Sinh viên!</h1>
+				<p>
+					Chào mừng bạn đến với hệ thống quản lý của
+					Trường Đại học Kinh tế Quốc dân.
+				</p>
+				<div class="welcome-user">
+					Tài khoản: @User.Identity?.Name
+				</div>
+			</div>
+		</section>
+
+		@if (User.IsInRole("Staff"))
+		{
+			<section class="admission-statistics">
+				<h2>Thống kê tuyển sinh</h2>
+				<p class="statistics-description">
+					Tổng quan tình hình tiếp nhận và xử lý hồ sơ.
+				</p>
+
+				<div class="statistics-grid">
+					<div class="statistics-card">
+						<span class="statistics-label">Tổng hồ sơ</span>
+						<strong>@(ViewBag.TongHoSo ?? 0)</strong>
+						<span class="statistics-note">Hồ sơ đã tiếp nhận</span>
+					</div>
+
+					<div class="statistics-card pending">
+						<span class="statistics-label">Chờ xét duyệt</span>
+						<strong>@(ViewBag.ChoXetDuyet ?? 0)</strong>
+						<span class="statistics-note">Cần tiếp tục xử lý</span>
+					</div>
+
+					<div class="statistics-card approved">
+						<span class="statistics-label">Đã duyệt</span>
+						<strong>@(ViewBag.DaDuyet ?? 0)</strong>
+						<span class="statistics-note">Hồ sơ đã được duyệt</span>
+					</div>
+
+					<div class="statistics-card rejected">
+						<span class="statistics-label">Từ chối</span>
+						<strong>@(ViewBag.TuChoi ?? 0)</strong>
+						<span class="statistics-note">Hồ sơ bị từ chối</span>
+					</div>
+				</div>
+			</section>
+		}
+
+
+		<h2 class="section-title">
+			♙ Các chức năng dành cho sinh viên
+		</h2>
+
+		<div class="module-grid">
+
+			<a asp-controller="Home"
+			   asp-action="MyAdmission"
+			   class="module-card">
+				<div class="module-icon">📄</div>
+				<h3>Hồ sơ tuyển sinh của tôi</h3>
+				<p>
+					Xem và theo dõi trạng thái hồ sơ
+					tuyển sinh của bạn.
+				</p>
+				<span class="card-arrow">→</span>
+			</a>
+
+			<div class="module-card">
+				<div class="module-icon icon-green">🎓</div>
+				<h3>Thông tin học tập</h3>
+				<p>
+					Tra cứu lịch học, kết quả học tập
+					và thông tin khóa học.
+				</p>
+			</div>
+
+			<div class="module-card">
+				<div class="module-icon icon-purple">👤</div>
+				<h3>Thông tin cá nhân</h3>
+				<p>
+					Xem thông tin tài khoản và thông tin
+					cá nhân của bạn.
+				</p>
+			</div>
+
+			<div class="module-card notice-card">
+				<div class="module-icon">📢</div>
+				<h3>Thông báo</h3>
+				<p>
+					Theo dõi các thông báo và thông tin
+					quan trọng từ nhà trường.
+				</p>
+			</div>
+
+		</div>
+
+		<section class="notice">
+			<h3>Thông báo hệ thống</h3>
+			<p>
+				Chào mừng bạn đến với cổng thông tin NEU.
+				Bạn có thể xem hồ sơ tuyển sinh của chính mình
+				và sử dụng các chức năng dành cho sinh viên.
+			</p>
+		</section>
+	}
+	else if (User.IsInRole("Staff"))
+	{
+		<!-- GIAO DIỆN CÁN BỘ -->
+
+		<section class="neu-banner">
+			<div class="banner-content">
+				<div class="banner-eyebrow">NEU MANAGEMENT</div>
+				<h1>Xin chào, Cán bộ!</h1>
+				<p>
+					Chào mừng bạn đến với hệ thống quản lý của
+					Trường Đại học Kinh tế Quốc dân.
+				</p>
+				<div class="welcome-user">
+					Tài khoản: @User.Identity?.Name
+				</div>
+			</div>
+		</section>
+
+        
+        
+		<h2 class="section-title">
+			▣ Các chức năng dành cho cán bộ
+		</h2>
+
+		<div class="module-grid">
+
+			<a asp-controller="Home"
+			   asp-action="Admissions"
+			   class="module-card">
+				<div class="module-icon">📋</div>
+				<h3>Quản lý hồ sơ tuyển sinh</h3>
+				<p>
+					Tìm kiếm hồ sơ, kiểm tra thông tin
+					và cập nhật trạng thái xét duyệt.
+				</p>
+				<span class="card-arrow">→</span>
+			</a>
+
+			<a asp-controller="Home"
+			   asp-action="DanhMucTuyenSinh"
+			   class="module-card">
+				<div class="module-icon icon-green">🎓</div>
+				<h3>Ngành và chỉ tiêu tuyển sinh</h3>
+				<p>
+					Tra cứu danh mục ngành, chương trình
+					và chỉ tiêu tuyển sinh.
+				</p>
+				<span class="card-arrow">→</span>
+			</a>
+
+			<a asp-controller="Home"
+			   asp-action="Students"
+			   class="module-card">
+				<div class="module-icon icon-purple">👥</div>
+				<h3>Quản lý sinh viên</h3>
+				<p>
+					Truy cập phân hệ quản lý thông tin
+					sinh viên của nhà trường.
+				</p>
+				<span class="card-arrow">→</span>
+			</a>
+
+			<a asp-controller="Home"
+			   asp-action="Training"
+			   class="module-card">
+				<div class="module-icon icon-orange">📚</div>
+				<h3>Quản lý đào tạo</h3>
+				<p>
+					Truy cập phân hệ chương trình
+					đào tạo và học phần.
+				</p>
+				<span class="card-arrow">→</span>
+			</a>
+
+			<a asp-controller="Home"
+			   asp-action="Reports"
+			   class="module-card">
+				<div class="module-icon">📊</div>
+				<h3>Báo cáo thống kê</h3>
+				<p>
+					Truy cập phân hệ tổng hợp
+					và báo cáo dữ liệu.
+				</p>
+				<span class="card-arrow">→</span>
+			</a>
+
+			
+			
+			<a asp-controller="DotTuyenSinh"
+			   asp-action="Index"
+			   class="module-card dot-card">
+
+				<div class="module-icon">
+					📅
+				</div>
+
+				<h3>Quản lý đợt tuyển sinh</h3>
+
+				<p>
+					Quản lý thời gian mở đợt, hạn đăng ký
+					và trạng thái tiếp nhận hồ sơ tuyển sinh.
+				</p>
+
+				<span class="card-arrow">→</span>
+			</a>
+
+
+
+
+		</div>
+
+
+		<section class="notice">
+			<h3>Thông báo hệ thống</h3>
+			<p>
+				Hệ thống đang hoạt động.
+				Vui lòng lựa chọn phân hệ phù hợp
+				để thực hiện công việc được phân quyền.
+			</p>
+		</section>
+	}
+	else
+	{
+		<section class="neu-banner">
+			<div class="banner-content">
+				<h1>NEU Management</h1>
+				<p>Vui lòng đăng nhập bằng tài khoản hợp lệ.</p>
+			</div>
+		</section>
+	}
+
+</div>

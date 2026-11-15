@@ -1,0 +1,58 @@
+﻿@model System.Data.DataTable
+
+@{
+    ViewData["Title"] = "Hồ sơ tuyển sinh của tôi";
+}
+
+<div class="container mt-4">
+    <h2>Hồ sơ tuyển sinh của tôi</h2>
+    <p class="text-muted">
+        Danh sách hồ sơ được liên kết với tài khoản đang đăng nhập.
+    </p>
+
+    @if (Model == null || Model.Rows.Count == 0)
+    {
+        <div class="alert alert-info">
+            Tài khoản chưa có hồ sơ tuyển sinh được liên kết.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Mã hồ sơ</th>
+                        <th>Họ tên</th>
+                        <th>Ngày đăng ký</th>
+                        <th>Ngành đăng ký</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (System.Data.DataRow row in Model.Rows)
+                    {
+                        <tr>
+                            <td>@row["MaHoSo"]</td>
+                            <td>@row["HoTen"]</td>
+                            <td>
+                                @(row["NgayDangKy"] == DBNull.Value
+                                    ? ""
+                                    : Convert.ToDateTime(row["NgayDangKy"])
+                                        .ToString("dd/MM/yyyy HH:mm"))
+                            </td>
+                            <td>@row["NganhDangKy"]</td>
+                            <td>@row["TrangThai"]</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <a asp-controller="Home"
+       asp-action="Index"
+       class="btn btn-outline-secondary">
+        Quay lại trang chủ
+    </a>
+</div>

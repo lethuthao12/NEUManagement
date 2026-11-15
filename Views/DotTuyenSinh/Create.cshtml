@@ -1,0 +1,99 @@
+﻿@model NEUManagement.Models.DotTuyenSinh
+
+@{
+    ViewData["Title"] = "Thêm đợt tuyển sinh";
+}
+
+<div class="container py-4">
+    <h2>Thêm đợt tuyển sinh</h2>
+    <p class="text-muted">
+        Nhập thông tin đợt tuyển sinh mới.
+    </p>
+
+    <form asp-controller="DotTuyenSinh"
+          asp-action="Create"
+          method="post">
+
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly"
+             class="text-danger mb-3"></div>
+
+        <div class="mb-3">
+            <label asp-for="TenDot" class="form-label">
+                Tên đợt tuyển sinh *
+            </label>
+            <input asp-for="TenDot" class="form-control" />
+            <span asp-validation-for="TenDot"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="NamTuyenSinh" class="form-label">
+                Năm tuyển sinh *
+            </label>
+            <input asp-for="NamTuyenSinh"
+                   type="number"
+                   class="form-control" />
+            <span asp-validation-for="NamTuyenSinh"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="NgayBatDau" class="form-label">
+                Ngày bắt đầu *
+            </label>
+            <input asp-for="NgayBatDau"
+                   type="date"
+                   class="form-control" />
+            <span asp-validation-for="NgayBatDau"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="HanDangKy" class="form-label">
+                Hạn đăng ký *
+            </label>
+            <input asp-for="HanDangKy"
+                   type="date"
+                   class="form-control" />
+            <span asp-validation-for="HanDangKy"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="TrangThai" class="form-label">
+                Trạng thái *
+            </label>
+            <select asp-for="TrangThai" class="form-select">
+                <option value="Chưa mở">Chưa mở</option>
+                <option value="Đang mở">Đang mở</option>
+                <option value="Đã đóng">Đã đóng</option>
+            </select>
+            <span asp-validation-for="TrangThai"
+                  class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="MoTa" class="form-label">
+                Mô tả
+            </label>
+            <textarea asp-for="MoTa"
+                      class="form-control"
+                      rows="3"></textarea>
+            <span asp-validation-for="MoTa"
+                  class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Lưu đợt tuyển sinh
+        </button>
+
+        <a asp-controller="DotTuyenSinh"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Quay lại
+        </a>
+    </form>
+</div>
+

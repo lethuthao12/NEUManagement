@@ -1,0 +1,210 @@
+﻿@using System.Data
+@{
+    ViewData["Title"] = "Đăng ký tuyển sinh";
+
+    DataTable danhSachDot = ViewBag.DanhSachDot;
+    DataTable danhSachDon = ViewBag.DanhSachDon;
+}
+
+<div class="container">
+    <h2 class="fw-bold mb-4" style="color:#14549a;">
+        Đăng ký tuyển sinh
+    </h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            Đăng ký nguyện vọng tuyển sinh
+        </div>
+
+        <div class="card-body">
+            @if (danhSachDot.Rows.Count > 0)
+            {
+                <form asp-controller="DangKyTuyenSinh"
+                      asp-action="Create"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            Đợt tuyển sinh
+                        </label>
+
+                        <select id="maDot"
+                                name="maDot"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                -- Chọn đợt tuyển sinh --
+                            </option>
+
+                            @foreach (DataRow dot in danhSachDot.Rows)
+                            {
+                                <option value="@dot["MaDot"]">
+                                    @dot["TenDot"] - Năm
+                                    @dot["NamTuyenSinh"]
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            Ngành tuyển sinh
+                        </label>
+
+                        <select id="maDanhMuc"
+                                name="maDanhMuc"
+                                class="form-select"
+                                required
+                                disabled>
+
+                            <option value="">
+                                -- Vui lòng chọn đợt trước --
+                            </option>
+                        </select>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Gửi đơn đăng ký
+                    </button>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-info mb-0">
+                    Hiện chưa có đợt tuyển sinh nào đang mở
+                    để đăng ký.
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0 fw-bold">
+                Các đơn đăng ký của tôi
+            </h5>
+        </div>
+
+        <div class="card-body">
+            @if (danhSachDon.Rows.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Đợt tuyển sinh</th>
+                                <th>Mã ngành</th>
+                                <th>Tên ngành</th>
+                                <th>Ngày đăng ký</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (DataRow don in danhSachDon.Rows)
+                            {
+                                <tr>
+                                    <td>@don["MaDangKy"]</td>
+                                    <td>@don["TenDot"]</td>
+                                    <td>@don["MaNganh"]</td>
+                                    <td>@don["TenNganh"]</td>
+                                    <td>
+                                        @Convert.ToDateTime(
+                                            don["NgayDangKy"]
+                                        ).ToString("dd/MM/yyyy HH:mm")
+                                    </td>
+                                    <td>@don["TrangThai"]</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mb-0">
+                    Bạn chưa có đơn đăng ký tuyển sinh nào.
+                </p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("maDot")
+            .addEventListener("change", async function () {
+
+                const maDot = this.value;
+                const maDanhMuc =
+                    document.getElementById("maDanhMuc");
+
+                maDanhMuc.innerHTML =
+                    '<option value="">-- Đang tải ngành --</option>';
+
+                maDanhMuc.disabled = true;
+
+                if (!maDot) {
+                    maDanhMuc.innerHTML =
+                        '<option value="">-- Vui lòng chọn đợt trước --</option>';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(
+                        '@Url.Action("GetNganh", "DangKyTuyenSinh")'
+                        + '?maDot=' + encodeURIComponent(maDot)
+                    );
+
+                    if (!response.ok) {
+                        throw new Error("Không tải được danh sách ngành.");
+                    }
+
+                    const data = await response.json();
+
+                    maDanhMuc.innerHTML =
+                        '<option value="">-- Chọn ngành --</option>';
+
+                    data.forEach(function (nganh) {
+                        const option = document.createElement("option");
+
+                        option.value = nganh.maDanhMuc;
+                        option.textContent =
+                            nganh.maNganh + " - " + nganh.tenNganh;
+
+                        maDanhMuc.appendChild(option);
+                    });
+
+                    maDanhMuc.disabled = data.length === 0;
+
+                    if (data.length === 0) {
+                        maDanhMuc.innerHTML =
+                            '<option value="">Đợt này chưa có ngành tuyển sinh</option>';
+                    }
+                }
+                catch (error) {
+                    maDanhMuc.innerHTML =
+                        '<option value="">Không thể tải danh sách ngành</option>';
+                }
+            });
+    </script>
+}
