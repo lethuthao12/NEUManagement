@@ -45,21 +45,27 @@ namespace NEUManagement.Data
 			var table = new DataTable();
 
 			const string sql = @"
-        SELECT
-            COUNT(*) AS TongHoSo,
-            SUM(CASE
-                WHEN TrangThai = N'Chờ xét duyệt' THEN 1
-                ELSE 0
-            END) AS ChoXetDuyet,
-            SUM(CASE
-                WHEN TrangThai = N'Đã duyệt' THEN 1
-                ELSE 0
-            END) AS DaDuyet,
-            SUM(CASE
-                WHEN TrangThai = N'Từ chối' THEN 1
-                ELSE 0
-            END) AS TuChoi
-        FROM dbo.HoSoTuyenSinh;";
+        
+		SELECT
+		COUNT(*) AS TongHoSo,
+
+		COALESCE(SUM(CASE
+		WHEN TrangThai = N'Chờ xét duyệt' THEN 1
+		ELSE 0
+		END), 0) AS ChoXetDuyet,
+
+		COALESCE(SUM(CASE
+		WHEN TrangThai = N'Đã duyệt' THEN 1
+		ELSE 0
+		END), 0) AS DaDuyet,
+
+		COALESCE(SUM(CASE
+		WHEN TrangThai = N'Từ chối' THEN 1
+		ELSE 0
+		END), 0) AS TuChoi
+
+		FROM dbo.HoSoTuyenSinh;";
+
 
 			await using var connection =
 				new SqlConnection(_connectionString);
@@ -86,7 +92,8 @@ namespace NEUManagement.Data
 			var table = new DataTable();
 
 			const string sql = @"
-        SELECT
+
+		SELECT
             MaHoSo,
             HoTen,
             NgayDangKy,

@@ -9,62 +9,48 @@ namespace NEUManagement.Controllers
 {
 	public class HomeController : Controller
 	{
+		private readonly HoSoTuyenSinhData _hoSoTuyenSinhData;
+		private readonly ILogger<HomeController> _logger;
+
+		public HomeController(
+			HoSoTuyenSinhData hoSoTuyenSinhData,
+			ILogger<HomeController> logger)
+		{
+			_hoSoTuyenSinhData = hoSoTuyenSinhData;
+			_logger = logger;
+		}
 
 		[Authorize(Roles = "Student")]
 		[HttpGet]
 		public async Task<IActionResult> MyAdmission()
 		{
-			var maTaiKhoanClaim =
-				User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-			if (!int.TryParse(maTaiKhoanClaim, out int maTaiKhoan))
-			{
-				return Challenge();
-			}
-
-			var data =
-				await _hoSoTuyenSinhData.GetMyAdmissionAsync(maTaiKhoan);
-
-			if (data.Rows.Count == 0)
-			{
-				ViewBag.Message = "Tài khoản chưa được liên kết với hồ sơ tuyển sinh.";
-			}
-
-			return View(data);
-		}
-
-		private readonly HoSoTuyenSinhData _hoSoTuyenSinhData;
-
-		public HomeController(HoSoTuyenSinhData hoSoTuyenSinhData)
-		{
-			_hoSoTuyenSinhData = hoSoTuyenSinhData;
-		}
-		
-
-		[Authorize]
-		public async Task<IActionResult> Index()
-		{
 			try
 			{
-				var statistics =
-					await _hoSoTuyenSinhData.GetAdmissionStatisticsAsync();
+				var maTaiKhoanClaim =
+					User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-				ViewBag.TongHoSo = Convert.ToInt32(
-					statistics.Rows[0]["TongHoSo"]);
+				if (!int.TryParse(maTaiKhoanClaim, out int maTaiKhoan))
+				{
+					return Challenge();
+				}
 
-				ViewBag.ChoXetDuyet = Convert.ToInt32(
-					statistics.Rows[0]["ChoXetDuyet"]);
+				var data =
+					await _hoSoTuyenSinhData.GetMyAdmissionAsync(maTaiKhoan);
 
-				ViewBag.DaDuyet = Convert.ToInt32(
-					statistics.Rows[0]["DaDuyet"]);
+				if (data.Rows.Count == 0)
+				{
+					ViewBag.Message =
+						"Tài khoản chưa được liên kết với hồ sơ tuyển sinh.";
+				}
 
-				ViewBag.TuChoi = Convert.ToInt32(
-					statistics.Rows[0]["TuChoi"]);
-
-				return View();
+				return View(data);
 			}
-			catch (Microsoft.Data.SqlClient.SqlException)
+			catch (Exception ex)
 			{
+				_logger.LogError(
+					ex,
+					"Lỗi khi tải hồ sơ tuyển sinh của tài khoản sinh viên.");
+
 				return View("Error", new ErrorViewModel
 				{
 					RequestId = HttpContext.TraceIdentifier
@@ -73,9 +59,45 @@ namespace NEUManagement.Controllers
 		}
 
 
+		[Authorize]
+		public async Task<IActionResult> Index()
+		{
+			// Chỉ Staff mới cần tải thống kê tuyển sinh
+			if (User.IsInRole("Staff"))
+			{
+				try
+				{
+					var statistics =
+						await _hoSoTuyenSinhData.GetAdmissionStatisticsAsync();
+
+					ViewBag.TongHoSo = Convert.ToInt32(
+						statistics.Rows[0]["TongHoSo"]);
+
+					ViewBag.ChoXetDuyet = Convert.ToInt32(
+						statistics.Rows[0]["ChoXetDuyet"]);
+
+					ViewBag.DaDuyet = Convert.ToInt32(
+						statistics.Rows[0]["DaDuyet"]);
+
+					ViewBag.TuChoi = Convert.ToInt32(
+						statistics.Rows[0]["TuChoi"]);
+				}
+				catch (Microsoft.Data.SqlClient.SqlException)
+				{
+					return View("Error", new ErrorViewModel
+					{
+						RequestId = HttpContext.TraceIdentifier
+					});
+				}
+			}
+
+			return View();
+		}
 
 
 
+
+		[Authorize(Roles = "Staff")]
 		public async Task<IActionResult> Admissions(
 			string? keyword,
 			string? status,
